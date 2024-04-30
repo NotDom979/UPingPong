@@ -14,4 +14,10 @@ class PINGPONG_API UMultiplayerSessionSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 	
+public:
+	UMultiplayerSessionSubsystem();
+
+	void Initialize(FSubsystemCollectionBase& Collection) override;
+	void Deinitialize() override;
+private:
 };
