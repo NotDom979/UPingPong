@@ -1,0 +1,25 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-PingPong-3173.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"C:\Users\Dom\Documents\Unreal Projects\PingPong\Intermediate\Build\Win64\x64\PingPongEditor\Development\Engine\SharedPCH.Engine.Cpp20.h.obj"
+"C:\Users\Dom\Documents\Unreal Projects\PingPong\Intermediate\Build\Win64\x64\UnrealEditor\Development\PingPong\PingPong.init.gen.cpp.obj"
+"C:\Users\Dom\Documents\Unreal Projects\PingPong\Intermediate\Build\Win64\x64\UnrealEditor\Development\PingPong\PingPongCharacter.gen.cpp.obj"
+"C:\Users\Dom\Documents\Unreal Projects\PingPong\Intermediate\Build\Win64\x64\UnrealEditor\Development\PingPong\PingPongGameMode.gen.cpp.obj"
+"C:\Users\Dom\Documents\Unreal Projects\PingPong\Intermediate\Build\Win64\x64\UnrealEditor\Development\PingPong\PingPongPlayerController.gen.cpp.obj"
+"C:\Users\Dom\Documents\Unreal Projects\PingPong\Intermediate\Build\Win64\x64\UnrealEditor\Development\PingPong\PingPongProjectile.gen.cpp.obj"
+"C:\Users\Dom\Documents\Unreal Projects\PingPong\Intermediate\Build\Win64\x64\UnrealEditor\Development\PingPong\TP_PickUpComponent.gen.cpp.obj"
+"C:\Users\Dom\Documents\Unreal Projects\PingPong\Intermediate\Build\Win64\x64\UnrealEditor\Development\PingPong\TP_WeaponComponent.gen.cpp.obj"
+"C:\Users\Dom\Documents\Unreal Projects\PingPong\Intermediate\Build\Win64\x64\UnrealEditor\Development\PingPong\PingPong.cpp.obj"
+"C:\Users\Dom\Documents\Unreal Projects\PingPong\Intermediate\Build\Win64\x64\UnrealEditor\Development\PingPong\PingPongCharacter.cpp.obj"
+"C:\Users\Dom\Documents\Unreal Projects\PingPong\Intermediate\Build\Win64\x64\UnrealEditor\Development\PingPong\PingPongGameMode.cpp.obj"
+"C:\Users\Dom\Documents\Unreal Projects\PingPong\Intermediate\Build\Win64\x64\UnrealEditor\Development\PingPong\PingPongPlayerController.cpp.obj"
+"C:\Users\Dom\Documents\Unreal Projects\PingPong\Intermediate\Build\Win64\x64\UnrealEditor\Development\PingPong\PingPongProjectile.cpp.obj"
+"C:\Users\Dom\Documents\Unreal Projects\PingPong\Intermediate\Build\Win64\x64\UnrealEditor\Development\PingPong\TP_PickUpComponent.cpp.obj"
+"C:\Users\Dom\Documents\Unreal Projects\PingPong\Intermediate\Build\Win64\x64\UnrealEditor\Development\PingPong\TP_WeaponComponent.cpp.obj"
+"C:\Users\Dom\Documents\Unreal Projects\PingPong\Intermediate\Build\Win64\x64\UnrealEditor\Development\PingPong\Default.rc2.res"
+/OUT:"C:\Users\Dom\Documents\Unreal Projects\PingPong\Intermediate\Build\Win64\x64\UnrealEditor\Development\PingPong\UnrealEditor-PingPong-3173.lib"
