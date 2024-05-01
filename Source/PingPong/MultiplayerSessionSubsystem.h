@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+#include "Interfaces/OnlineSessionInterface.h"
 #include "MultiplayerSessionSubsystem.generated.h"
 
 /**
@@ -19,5 +20,16 @@ public:
 
 	void Initialize(FSubsystemCollectionBase& Collection) override;
 	void Deinitialize() override;
+
+	UFUNCTION(BlueprintCallable)
+	void CreateServer(FString serverName);
+
+	UFUNCTION(BlueprintCallable)
+	void JoinServer(FString serverName);
+
+	void OnCreateSessionComplete(FName SessionName, bool WasSuccessful);
+
 private:
+	IOnlineSessionPtr SessionInterface;
+	FString SubsystemName;
 };
