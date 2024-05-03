@@ -3,7 +3,7 @@
 
 #include "MultiplayerSessionSubsystem.h"
 #include "OnlineSubsystem.h"
-#include "OnlineSessionSettings.h"
+
 
 
 void PrintString(const FString& debugText)
@@ -33,6 +33,8 @@ void UMultiplayerSessionSubsystem::Initialize(FSubsystemCollectionBase& Collecti
 		{
 			PrintString("Session interface is valid!");
 			SessionInterface->OnCreateSessionCompleteDelegates.AddUObject(this, &UMultiplayerSessionSubsystem::OnCreateSessionComplete);
+			SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UMultiplayerSessionSubsystem::OnDestroySessionComplete);
+			SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UMultiplayerSessionSubsystem::OnFindSessionsComplete);
 		}
 	}
 }
@@ -51,6 +53,14 @@ void UMultiplayerSessionSubsystem::CreateServer(FString serverName)
 	}
 	FName SessionName = ("PingPongSession");
 	FOnlineSessionSettings sessionSettings;
+	
+	
+	FNamedOnlineSession* sessionCheck = SessionInterface->GetNamedSession(SessionName);
+	if (sessionCheck)
+	{
+		PrintString("Destroying Session");
+		SessionInterface->DestroySession(SessionName);
+	}
 
 	sessionSettings.bAllowJoinInProgress = true;
 	sessionSettings.bIsDedicated = false;
@@ -72,6 +82,25 @@ void UMultiplayerSessionSubsystem::CreateServer(FString serverName)
 
 void UMultiplayerSessionSubsystem::JoinServer(FString serverName)
 {
+	if (serverName.IsEmpty())
+	{
+		PrintString("Server name is empty!");
+		return;
+	}
+	SessionSearch = MakeShareable(new FOnlineSessionSearch());
+
+	if (SubsystemName == "NULL")
+	{
+		SessionSearch->bIsLanQuery = true;
+	}
+	else
+	{
+		SessionSearch->bIsLanQuery = false;
+	}
+	SessionSearch->MaxSearchResults = 9999;
+	SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
+
+	SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
 }
 
 void UMultiplayerSessionSubsystem::OnCreateSessionComplete(FName SessionName, bool WasSuccessful)
@@ -82,4 +111,25 @@ void UMultiplayerSessionSubsystem::OnCreateSessionComplete(FName SessionName, bo
 	{
 		GetWorld()->ServerTravel("/Game/FirstPerson/Maps/FirstPersonMap?listen");
 	}
+}
+
+void UMultiplayerSessionSubsystem::OnDestroySessionComplete(FName SessionName, bool WasSuccessful)
+{
+	PrintString(FString::Printf(TEXT("OnDestroySessionComplete: %d"), WasSuccessful));
+
+}
+
+void UMultiplayerSessionSubsystem::OnFindSessionsComplete(bool WasSuccessful)
+{
+	if (!WasSuccessful) return;
+	PrintString(FString::Printf(TEXT("OnFindSessionComplete: %d"), WasSuccessful));
+	TArray<FOnlineSessionSearchResult> Results = SessionSearch->SearchResults;
+
+	if (Results.Num() > 0)
+	{
+		FString SearchResults = FString::Printf(TEXT("%d sessions found"), Results.Num());
+		PrintString(SearchResults);
+	}
+	else
+		PrintString("No Sessions Found");
 }
