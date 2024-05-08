@@ -51,6 +51,7 @@ void UMultiplayerSessionSubsystem::CreateServer(FString serverName)
 	if (serverName.IsEmpty())
 	{
 		PrintString("Server name is empty!");
+		ServerCreateDel.Broadcast(false);
 		return;
 	}
 	SessionName = ("PingPongSession");
@@ -89,6 +90,7 @@ void UMultiplayerSessionSubsystem::JoinServer(FString serverName)
 	if (serverName.IsEmpty())
 	{
 		PrintString("Server name is empty!");
+		ServerJoinDel.Broadcast(false);
 		return;
 	}
 	SessionSearch = MakeShareable(new FOnlineSessionSearch());
@@ -108,17 +110,19 @@ void UMultiplayerSessionSubsystem::JoinServer(FString serverName)
 	SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
 }
 
-void UMultiplayerSessionSubsystem::OnCreateSessionComplete(FName SessionName, bool WasSuccessful)
+void UMultiplayerSessionSubsystem::OnCreateSessionComplete(FName _SessionName, bool WasSuccessful)
 {
 	PrintString(FString::Printf(TEXT("OnCreateSessionComplete: %d"), WasSuccessful));
 	PrintString("Session Callback");
+
+	ServerCreateDel.Broadcast(WasSuccessful);
 	if (WasSuccessful)
 	{
 		GetWorld()->ServerTravel("/Game/FirstPerson/Maps/FirstPersonMap?listen");
 	}
 }
 
-void UMultiplayerSessionSubsystem::OnDestroySessionComplete(FName SessionName, bool WasSuccessful)
+void UMultiplayerSessionSubsystem::OnDestroySessionComplete(FName _SessionName, bool WasSuccessful)
 {
 	PrintString(FString::Printf(TEXT("OnDestroySessionComplete: %d"), WasSuccessful));
 
@@ -129,6 +133,8 @@ void UMultiplayerSessionSubsystem::OnFindSessionsComplete(bool WasSuccessful)
 	if (!WasSuccessful) return;
 	if (serverNametoFind.IsEmpty())
 	{
+		PrintString("server name cannot be empty");
+		ServerJoinDel.Broadcast(false);
 		return;
 	}
 	PrintString(FString::Printf(TEXT("OnFindSessionComplete: %d"), WasSuccessful));
@@ -151,8 +157,8 @@ void UMultiplayerSessionSubsystem::OnFindSessionsComplete(bool WasSuccessful)
 				if (ResultName.Equals(serverNametoFind))
 				{
 					CorrectResult = &Result;
-					FString msg2 = FString::Printf(TEXT("Found Server: %s"), *ResultName);
-					PrintString(msg2);
+					FString msg3 = FString::Printf(TEXT("Found Server: %s"), *ResultName);
+					PrintString(msg3);
 					break;
 				}
 			}
@@ -165,15 +171,19 @@ void UMultiplayerSessionSubsystem::OnFindSessionsComplete(bool WasSuccessful)
 		{
 			PrintString(FString::Printf(TEXT("Couldnt Find Server: %s"), *serverNametoFind));
 			serverNametoFind = "";
-
+			ServerJoinDel.Broadcast(false);
 		}
 	}
 	else
-		PrintString("No Sessions Found");
+	{
+		PrintString("No Sessions Found"); 
+		ServerJoinDel.Broadcast(false);
+	}
 }
 
-void UMultiplayerSessionSubsystem::OnJoinSessionsComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
+void UMultiplayerSessionSubsystem::OnJoinSessionsComplete(FName _SessionName, EOnJoinSessionCompleteResult::Type Result)
 {
+	ServerJoinDel.Broadcast(Result == EOnJoinSessionCompleteResult::Success);
 	if (Result == EOnJoinSessionCompleteResult::Success)
 	{
 		FString msg2 = FString::Printf(TEXT("Successfully joined: %s"), *SessionName.ToString());

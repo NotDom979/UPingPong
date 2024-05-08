@@ -9,6 +9,9 @@
 #include "Online/OnlineSessionNames.h"
 #include "MultiplayerSessionSubsystem.generated.h"
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FServerCreateDelegate, bool, WasSuccessful);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FServerJoinDelegate, bool, WasSuccessful);
 /**
  * 
  */
@@ -29,17 +32,23 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void JoinServer(FString serverName);
 
-	void OnCreateSessionComplete(FName SessionName, bool WasSuccessful);
+	void OnCreateSessionComplete(FName _SessionName, bool WasSuccessful);
 
-	void OnDestroySessionComplete(FName SessionName, bool WasSuccessful);
+	void OnDestroySessionComplete(FName _SessionName, bool WasSuccessful);
 
 	void OnFindSessionsComplete(bool WasSuccessful);
-	void OnJoinSessionsComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result);
+	void OnJoinSessionsComplete(FName _SessionName, EOnJoinSessionCompleteResult::Type Result);
 
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;
 
 	FString serverNametoFind;
 	FName SessionName;
+
+	UPROPERTY(BlueprintAssignable)
+	FServerCreateDelegate ServerCreateDel;
+	
+	UPROPERTY(BlueprintAssignable)
+	FServerJoinDelegate ServerJoinDel;
 private:
 	IOnlineSessionPtr SessionInterface;
 	FString SubsystemName;
