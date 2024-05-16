@@ -37,6 +37,7 @@ void UMultiplayerSessionSubsystem::Initialize(FSubsystemCollectionBase& Collecti
 			SessionInterface->OnDestroySessionCompleteDelegates.AddUObject(this, &UMultiplayerSessionSubsystem::OnDestroySessionComplete);
 			SessionInterface->OnFindSessionsCompleteDelegates.AddUObject(this, &UMultiplayerSessionSubsystem::OnFindSessionsComplete);
 			SessionInterface->OnJoinSessionCompleteDelegates.AddUObject(this, &UMultiplayerSessionSubsystem::OnJoinSessionsComplete);
+
 		}
 	}
 }
@@ -75,7 +76,7 @@ void UMultiplayerSessionSubsystem::CreateServer(FString serverName)
 
 	sessionSettings.Set(FName("SERVER_NAME"), serverName, EOnlineDataAdvertisementType::ViaOnlineServiceAndPing);
 
-	if (SubsystemName == "NULL")
+	if (IOnlineSubsystem::Get()->GetSubsystemName() == "NULL")
 	{
 		sessionSettings.bIsLANMatch = true;
 	}
@@ -85,7 +86,7 @@ void UMultiplayerSessionSubsystem::CreateServer(FString serverName)
 	SessionInterface->CreateSession(0, SessionName, sessionSettings);
 }
 
-void UMultiplayerSessionSubsystem::JoinServer(FString serverName)
+void UMultiplayerSessionSubsystem::FindServer(FString serverName)
 {
 	if (serverName.IsEmpty())
 	{
@@ -134,6 +135,7 @@ void UMultiplayerSessionSubsystem::OnFindSessionsComplete(bool WasSuccessful)
 	if (serverNametoFind.IsEmpty())
 	{
 		PrintString("server name cannot be empty");
+		PrintString(serverNametoFind);
 		ServerJoinDel.Broadcast(false);
 		return;
 	}
@@ -205,4 +207,8 @@ void UMultiplayerSessionSubsystem::OnJoinSessionsComplete(FName _SessionName, EO
 	{
 		PrintString("OnJoinSessionComplete Failed");
 	}
+}
+
+void UMultiplayerSessionSubsystem::HandleNetworkFailure(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString)
+{
 }

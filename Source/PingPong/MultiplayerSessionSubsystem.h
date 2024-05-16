@@ -30,7 +30,7 @@ public:
 	void CreateServer(FString serverName);
 
 	UFUNCTION(BlueprintCallable)
-	void JoinServer(FString serverName);
+	void FindServer(FString serverName);
 
 	void OnCreateSessionComplete(FName _SessionName, bool WasSuccessful);
 
@@ -38,6 +38,7 @@ public:
 
 	void OnFindSessionsComplete(bool WasSuccessful);
 	void OnJoinSessionsComplete(FName _SessionName, EOnJoinSessionCompleteResult::Type Result);
+	void HandleNetworkFailure(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString);
 
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;
 
