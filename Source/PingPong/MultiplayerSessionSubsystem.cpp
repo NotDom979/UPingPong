@@ -2,7 +2,7 @@
 
 
 #include "MultiplayerSessionSubsystem.h"
-#include "OnlineSubsystem.h"
+
 
 
 
@@ -18,6 +18,7 @@ UMultiplayerSessionSubsystem::UMultiplayerSessionSubsystem()
 {
 	PrintString("MSS Constructor");
 	serverNametoFind = "";
+	globalSearch = false;
 }
 
 void UMultiplayerSessionSubsystem::Initialize(FSubsystemCollectionBase& Collection)
@@ -132,7 +133,8 @@ void UMultiplayerSessionSubsystem::OnDestroySessionComplete(FName _SessionName, 
 void UMultiplayerSessionSubsystem::OnFindSessionsComplete(bool WasSuccessful)
 {
 	if (!WasSuccessful) return;
-	if (serverNametoFind.IsEmpty())
+	PrintString(FString::Printf(TEXT("globalSearch: %d"), globalSearch));
+	if (serverNametoFind.IsEmpty() || !globalSearch == 1)
 	{
 		PrintString("server name cannot be empty");
 		PrintString(serverNametoFind);
@@ -152,14 +154,21 @@ void UMultiplayerSessionSubsystem::OnFindSessionsComplete(bool WasSuccessful)
 			{
 				FString ResultName = "None";
 				Result.Session.SessionSettings.Get(FName("SERVER_NAME"), ResultName);
+				PrintString("REAL SERVER NAME SET");
 
 				FString msg2 = FString::Printf(TEXT("ServerName: %s"), *ResultName);
 				PrintString(msg2);
+
+				if (globalSearch)
+				{
+					Result.Session.SessionSettings.Get(FName("SERVER_NAME"), realServerName);
+				}
 
 				if (ResultName.Equals(serverNametoFind))
 				{
 					CorrectResult = &Result;
 					FString msg3 = FString::Printf(TEXT("Found Server: %s"), *ResultName);
+					SessionInterface->JoinSession(0, SessionName, *CorrectResult);
 					PrintString(msg3);
 					break;
 				}
@@ -167,6 +176,7 @@ void UMultiplayerSessionSubsystem::OnFindSessionsComplete(bool WasSuccessful)
 		}
 		if (CorrectResult)
 		{
+			PrintString("Attempting join...");
 			SessionInterface->JoinSession(0, SessionName, *CorrectResult);
 		}
 		else
@@ -212,3 +222,29 @@ void UMultiplayerSessionSubsystem::OnJoinSessionsComplete(FName _SessionName, EO
 void UMultiplayerSessionSubsystem::HandleNetworkFailure(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString)
 {
 }
+
+void UMultiplayerSessionSubsystem::RefreshServers()
+{
+	SessionSearch = MakeShareable(new FOnlineSessionSearch());
+
+	if (SubsystemName == "NULL")
+	{
+		SessionSearch->bIsLanQuery = true;
+	}
+	else
+	{
+		SessionSearch->bIsLanQuery = false;
+	}
+	SessionSearch->MaxSearchResults = 9999;
+	SessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
+	//serverNametoFind = serverName;
+	globalSearch = true;
+	SessionInterface->FindSessions(0, SessionSearch.ToSharedRef());
+}
+
+//FString UMultiplayerSessionSubsystem::ServerNameGrabber(FOnlineSessionSearchResult* targetSession)
+//{
+//	FString nameofServer = "";
+//	targetSession->Session.SessionSettings.Get(FName("SERVER_NAME"), nameofServer);
+//	return nameofServer;
+//}

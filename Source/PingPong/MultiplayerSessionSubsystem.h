@@ -7,6 +7,7 @@
 #include "Interfaces/OnlineSessionInterface.h"
 #include "OnlineSessionSettings.h"
 #include "Online/OnlineSessionNames.h"
+#include "OnlineSubsystem.h"
 #include "MultiplayerSessionSubsystem.generated.h"
 
 
@@ -41,8 +42,24 @@ public:
 	void HandleNetworkFailure(UWorld* World, UNetDriver* NetDriver, ENetworkFailure::Type FailureType, const FString& ErrorString);
 
 	TSharedPtr<FOnlineSessionSearch> SessionSearch;
-
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
 	FString serverNametoFind;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	FString realServerName;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere)
+	bool globalSearch;
+
+	UFUNCTION(BlueprintCallable)
+	void RefreshServers();
+
+	UFUNCTION(BlueprintCallable)
+	void BrowserJoin(FString serverName);
+
+
+	//FString ServerNameGrabber(FOnlineSessionSearchResult* targetSession);
+
 	FName SessionName;
 
 	UPROPERTY(BlueprintAssignable)
