@@ -54,8 +54,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RefreshServers();
 
-	UFUNCTION(BlueprintCallable)
-	void BrowserJoin(FString serverName);
+	//UFUNCTION(BlueprintCallable)
+	//void BrowserJoin(FString serverName);
 
 
 	//FString ServerNameGrabber(FOnlineSessionSearchResult* targetSession);
