@@ -162,13 +162,14 @@ void UMultiplayerSessionSubsystem::OnFindSessionsComplete(bool WasSuccessful)
 				if (globalSearch)
 				{
 					Result.Session.SessionSettings.Get(FName("SERVER_NAME"), realServerName);
+					globalSearch = false;
 				}
 
 				if (ResultName.Equals(serverNametoFind))
 				{
 					CorrectResult = &Result;
 					FString msg3 = FString::Printf(TEXT("Found Server: %s"), *ResultName);
-					SessionInterface->JoinSession(0, SessionName, *CorrectResult);
+					//SessionInterface->JoinSession(0, SessionName, *CorrectResult);
 					PrintString(msg3);
 					break;
 				}
